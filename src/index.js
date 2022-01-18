@@ -6,33 +6,54 @@ import reportWebVitals from './reportWebVitals';
 
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
-import counter from './reducers/counter.reducer'
+import rootReducer from './reducers/root.reducer'
 
-import rootSaga from './sagas'
+import rootSaga from './sagas/rootSaga'
+import { Provider } from 'react-redux';
 
+/**
+ * initialize redux store
+ */
 const sagaMiddleware = createSagaMiddleware()
 const store = createStore(
-  counter,
+  rootReducer,
+
+  // add a middleware, redux-saga for which listens any redux actions
   applyMiddleware(sagaMiddleware)
 )
+
+/**
+ * setup a listner of on 'rootSaga'
+ */
 sagaMiddleware.run(rootSaga)
 
-function render() {
+ReactDOM.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>,
+  document.getElementById('root')
+)
 
-  ReactDOM.render(
-    <React.StrictMode>
-      <App store={store} />
-    </React.StrictMode>,
-    document.getElementById('root')
-  )
+reportWebVitals();
 
-  // If you want to start measuring performance in your app, pass a function
-  // to log results (for example: reportWebVitals(console.log))
-  // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-  reportWebVitals();
+// function render() {
 
-}
+//   ReactDOM.render(
+//     <React.StrictMode>
+//       <App store={store} />
+//     </React.StrictMode>,
+//     document.getElementById('root')
+//   )
 
-render()
-store.subscribe(render)
+//   // If you want to start measuring performance in your app, pass a function
+//   // to log results (for example: reportWebVitals(console.log))
+//   // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+//   reportWebVitals();
+
+// }
+
+// render()
+// store.subscribe(render)
 

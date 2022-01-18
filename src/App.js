@@ -1,110 +1,74 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   BrowserRouter as Router,
+  /**
+   * using @v5.2.0
+   * Switch not Supported since react-router v6 https://stackoverflow.com/questions/69843615/switch-is-not-exported-from-react-router-dom
+   */
+  Switch,
   Route,
 } from 'react-router-dom'
 
 import './App.css'
+import { Button } from '@mui/material'
 
 import EmployeeAddForm from './components/EmployeeAddForm'
 import EmployeeEditForm from './components/EmployeeEditForm'
+import EmployeeList from './components/EmployeeList'
 
-const Counter = ({ value, onIncrement, onDecrement, onIncrementAsync }) => (
-  <div>
-    <button onClick={onIncrementAsync}>
-      Increment after 1 second
-    </button>
-    {' '}
-    <button onClick={onIncrement}>
-      Increment
-    </button>
-    {' '}
-    <button onClick={onDecrement}>
-      Decrement
-    </button>
-    <hr />
-    <div>
-      Clicked: {value} times
-    </div>
-  </div>
-)
+import { GetEmployees } from './api/employee.api'
 
 const routes = [
   {
+    linkTitle: 'Home Page',
+    path: '/employee/list',
+    child: EmployeeList,
+  },
+  {
     linkTitle: 'Add Employee',
     path: '/employee/add',
-    children: <EmployeeAddForm />,
+    child: EmployeeAddForm,
   },
   {
     linkTitle: 'Edit Employee',
     path: '/employee/edit',
-    children: <EmployeeEditForm />,
+    child: EmployeeEditForm,
   },
 ]
 
-const MyRouter = () => {
-
-  return (
-    <Router>
-      {routes.map(r => (
-        <Route path={r.path} children={r.children} />
-      ))}
-    </Router>
-  )
-}
-
-
-
 function App({ store }) {
 
-  const action = type => store.dispatch({ type })
+  const dispatch = useDispatch()
+  React.useEffect(() => {
+    dispatch(GetEmployees())
+  }, [dispatch])
 
-  const [employees, setEmployees] = React.useState()
-  const getEmployees = () => {
-
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      body: null,
-      redirect: 'follow'
-    };
-
-    fetch("https://6164f6e709a29d0017c88ed9.mockapi.io/fetest/employees", requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        setEmployees(result)
-      })
-      .catch(error => console.log('error', error));
-
-  }
-
-  React.useEffect(() => getEmployees(), [])
+  const employees = useSelector(state => state.employees)
+  console.log(employees)
 
   return (
     <div className='App'>
-      <h1> Redux Sage Test </h1>
-      <Counter
-        value={store.getState()}
-        onIncrement={() => action('INCREMENT')}
-        onDecrement={() => action('DECREMENT')}
-        onIncrementAsync={() => action('INCREMENT_ASYNC')}
-      />
+      <Router>
 
-      {employees && employees.map(a => (
-        <div>
-          <span>{a.firstName}</span>
-          <span>{a.lastName}</span>
-          <span>{a.email}</span>
-          <span>{a.number}</span>
-          <span>{a.gender}</span>
-        </div>
-      ))}
+        <h1> Employee Manager </h1>
+        <Switch>
+          {routes.map((r, i) => (
+            <Route key={i}
+              exact
+              path={r.path}
+              children={r.child}
+            />
+          ))}
+        </Switch>
 
-      {/* <MyRouter></MyRouter> */}
+        <Button
+          variant='contained'
+          onSubmit={() => { }}
+        >Submit</Button>
+      </Router>
     </div>
+
   )
 }
 
