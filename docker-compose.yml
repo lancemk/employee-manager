@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+
+  frontend:
+    image: react/employee-manager:1.0.0
+    ports:
+      - "3000:3001"
+    build:
+      # the directory of w
+      context: .
+      dockerfile: ./Dockerfile

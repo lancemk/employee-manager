@@ -1,74 +1,67 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import {
   BrowserRouter as Router,
   /**
    * using @v5.2.0
-   * Switch not Supported since react-router v6 https://stackoverflow.com/questions/69843615/switch-is-not-exported-from-react-router-dom
+   * Switch not Supported since react-router v6 
+   * https://stackoverflow.com/questions/69843615/switch-is-not-exported-from-react-router-dom
    */
   Switch,
   Route,
+  Redirect,
 } from 'react-router-dom'
 
 import './App.css'
-import { Button } from '@mui/material'
 
-import EmployeeAddForm from './components/EmployeeAddForm'
-import EmployeeEditForm from './components/EmployeeEditForm'
+import EmployeeForm from './components/EmployeeForm'
 import EmployeeList from './components/EmployeeList'
-
-import { GetEmployees } from './api/employee.api'
 
 const routes = [
   {
-    linkTitle: 'Home Page',
+    linkTitle: 'Employee List',
     path: '/employee/list',
-    child: EmployeeList,
+    component: EmployeeList,
   },
   {
     linkTitle: 'Add Employee',
     path: '/employee/add',
-    child: EmployeeAddForm,
+    component: EmployeeForm,
   },
   {
-    linkTitle: 'Edit Employee',
+    linkTitle: 'Employee Employee',
     path: '/employee/edit',
-    child: EmployeeEditForm,
+    component: EmployeeForm,
   },
 ]
 
-function App({ store }) {
-
-  const dispatch = useDispatch()
-  React.useEffect(() => {
-    dispatch(GetEmployees())
-  }, [dispatch])
-
-  const employees = useSelector(state => state.employees)
-  console.log(employees)
+function App() {
 
   return (
     <div className='App'>
       <Router>
 
-        <h1> Employee Manager </h1>
+        <h2 style={{
+          flex: 1,
+          display: 'block',
+          width: '100%'
+        }}> List Manager </h2>
+
+        {/* list of route urls supported */}
         <Switch>
           {routes.map((r, i) => (
             <Route key={i}
               exact
               path={r.path}
-              children={r.child}
+              component={r.component}
             />
           ))}
+
+          {/* upon reaching root, redirect */}
+          <Redirect from="/" to="/employee/list" />
         </Switch>
 
-        <Button
-          variant='contained'
-          onSubmit={() => { }}
-        >Submit</Button>
       </Router>
     </div>
-
   )
 }
 

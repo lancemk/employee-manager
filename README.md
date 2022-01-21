@@ -1,8 +1,7 @@
 # Frontend Test - Simple Employee Management UI
 
----
 
-## How to setup
+# How to setup
 
 This CRA project is built with yarn manager. First clone this repository
 ```sh

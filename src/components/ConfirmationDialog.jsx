@@ -6,9 +6,9 @@ import DialogActions from '@mui/material/DialogActions';
 import Dialog from '@mui/material/Dialog';
 import { Button } from '@mui/material';
 
-
 export default function ConfirmationDialog(props) {
-  const { onClose, value: valueProp, open, title, body, ...other } = props;
+
+  const { onOk, onCancel, value: valueProp, open, title, body, ...other } = props;
   const [value, setValue] = React.useState(valueProp);
   const radioGroupRef = React.useRef(null);
 
@@ -22,14 +22,6 @@ export default function ConfirmationDialog(props) {
     if (radioGroupRef.current != null) {
       radioGroupRef.current.focus();
     }
-  };
-
-  const handleCancel = () => {
-    onClose();
-  };
-
-  const handleOk = () => {
-    onClose(value);
   };
 
   return (
@@ -46,17 +38,18 @@ export default function ConfirmationDialog(props) {
         {body}
       </DialogContent>
       <DialogActions>
-        <Button autoFocus onClick={handleCancel}>
+        <Button autoFocus onClick={onCancel}>
           Cancel
         </Button>
-        <Button onClick={handleOk}>Ok</Button>
+        <Button onClick={onOk}>Ok</Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-ConfirmationDialogRaw.propTypes = {
-  onClose: PropTypes.func.isRequired,
+ConfirmationDialog.propTypes = {
+  onOk: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   value: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,

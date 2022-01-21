@@ -3,7 +3,7 @@ import EmployeeReducer from './employee.reducer'
 
 const rootReducer = combineReducers({
   // reducers key:value pair ...
-  employee: EmployeeReducer
+  employees: EmployeeReducer
 })
 
 export default rootReducer

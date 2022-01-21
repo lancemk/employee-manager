@@ -1,5 +1,27 @@
+@import 'ag-grid-community/dist/styles/ag-grid.css';
+@import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
+
 .App {
-  margin:0 auto; 
-  width: 75%;
+  margin:0 auto;
+  position: relative; 
+  width: 96%;
+  height: 100vh;
+
+  vertical-align: middle;
   text-align:center;  
+  /* background-color: lightgray; */
+}
+
+div.ag-theme-balham-dark 
+div.ag-row {
+  font-size: 15px !important;
+  text-align: center;
+}
+
+div.ag-header {
+  font-size: 18px !important;
+}
+
+.ag-cell-focus, .ag-cell {
+  border: none !important;
 }

@@ -1,58 +1,150 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { Button } from '@mui/material';
 
+import {
+  Link, useHistory,
+} from 'react-router-dom'
+
+import {
+  AgGridColumn,
+  AgGridReact
+} from 'ag-grid-react';
 // using ag-grid
-import { AgGridColumn, AgGridReact } from 'ag-grid-react';
-
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 
+import {
+  addEmployee,
+  delEmployee,
+  getEmployees
+} from '../redux/action/employee.action'
+import ConfirmationDialog from './ConfirmationDialog'
 
-const rowData = [
-  { make: "Toyota", model: "Celica", price: 35000 },
-  { make: "Ford", model: "Mondeo", price: 32000 },
-  { make: "Porsche", model: "Boxter", price: 72000 }
-];
+// ag-grid EDIT button cell renderer
+const AgEditCellRenderer = (props) => {
 
-/**
- * 
- * 
- */
-export default function EmployeeList() {
+  const cellValue = props.valueFormatted ? props.valueFormatted : props.value;
 
-  // employee list state
-  const [employees, setEmployees] = React.useState()
+  const buttonClicked = () => {
+    alert(`${cellValue} medals won!`);
+  };
 
-  // initial call of employees from 
-  React.useEffect(() => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      body: null,
-      redirect: 'follow'
-    };
-
-    fetch("https://6164f6e709a29d0017c88ed9.mockapi.io/fetest/employees", requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        setEmployees(result)
-      })
-      .catch(error => console.log('error', error));
-  }, [])
-
+  const history = useHistory()
 
   return (
-    <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
+    <>
+      <span>{cellValue}</span>&nbsp;
+      <Button
+        variant='contained'
+        // onClick={() => buttonClicked()}
+        onClick={() => {
+          history.push('/employee/edit')
+        }}
+      > EDIT</Button>
+    </>
+  );
+
+}
+
+// ag-grid DELETE button cell renderer
+const AgDeleteCellRenderer = (props) => {
+
+  const cellValue = props.valueFormatted ? props.valueFormatted : props.value;
+
+  const buttonClicked = () => {
+    alert(`${cellValue} medals won!`);
+  };
+
+  return (
+    <>
+      <span>{cellValue}</span>&nbsp;
+      <Button
+        variant='contained'
+        onClick={() => buttonClicked()}
+      > DELETE </Button>
+    </>
+  );
+
+}
+
+export default function EmployeeList() {
+
+  const dispatch = useDispatch()
+  React.useEffect(() => {
+    dispatch(getEmployees())
+  }, [dispatch])
+
+  // employee list state
+  const employees = useSelector(state => state.employees)
+  const handleAddEmployee = () => dispatch(addEmployee())
+
+  const [isOpen, setDialogOpen] = React.useState()
+  const handleOk = () => {
+
+  }
+
+  return (
+    <div
+      className="ag-theme-balham-dark"
+      style={{
+        height: '80vh',
+        maxWidth: 1310, // set max width, depends on fix font-size and row details, only 5 column here very short
+        margin: '0.8em 0 2.6em 0'
+      }}
+    >
+      <div style={{ textAlign: 'end', margin: 6 }}>
+        <Link to="/employee/add">
+          <Button
+            style={{
+              margin: 10, padding: 5,
+            }}
+            variant='contained'
+            onClick={handleAddEmployee}
+          > Add </Button>
+        </Link>
+      </div>
+
       <AgGridReact
+
+        gridOptions={{
+          rowHeight: 45,
+        }}
+        frameworkComponents={{
+          agEditCellRenderer: AgEditCellRenderer,
+          agDeleteCellRenderer: AgDeleteCellRenderer,
+        }}
+        detailRowAutoHeight={true}
         rowData={employees}>
-        <AgGridColumn field="first name"></AgGridColumn>
-        <AgGridColumn field="last name"></AgGridColumn>
+        <AgGridColumn field="firstName"></AgGridColumn>
+        <AgGridColumn field="lastName"></AgGridColumn>
         <AgGridColumn field="email"></AgGridColumn>
-        <AgGridColumn field="phone number"></AgGridColumn>
+        <AgGridColumn field="number"></AgGridColumn>
         <AgGridColumn field="gender"></AgGridColumn>
+        <AgGridColumn
+          field=""
+          maxWidth={130}
+          cellRenderer="agEditCellRenderer"
+        />
+        <AgGridColumn
+          field=""
+          maxWidth={130}
+          cellRenderer="agDeleteCellRenderer"
+        />
+
       </AgGridReact>
+
+      <ConfirmationDialog
+        onOk={() => handleOk()}
+        onCancel={() => setDialogOpen(false)}
+        open={isOpen}
+        value={1}
+
+        title={'Employee Insert'}
+        body={'Form information checked. Confirm submission?'}
+      />
+
     </div>
   )
 }
+
